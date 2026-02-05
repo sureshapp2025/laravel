@@ -1,0 +1,83 @@
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons.scss';
+
+// Custom responsive styles
+body {
+    font-size: 0.95rem;
+
+    @media (min-width: 768px) {
+        font-size: 1rem;
+    }
+}
+
+// Improve form controls on mobile
+.form-control,
+.form-select {
+    font-size: 1rem;
+
+    @media (max-width: 767px) {
+        font-size: 16px; // Prevents zoom on iOS
+    }
+}
+
+// Better button spacing on mobile
+.btn {
+    @media (max-width: 767px) {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+}
+
+// Responsive table improvements
+.table-responsive {
+    @media (max-width: 767px) {
+        font-size: 0.875rem;
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+    }
+}
+
+// Card spacing
+.card {
+    @media (max-width: 767px) {
+        border-radius: 0.5rem;
+    }
+}
+
+// Navbar improvements
+.navbar {
+    @media (max-width: 991px) {
+        .navbar-collapse {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, .1);
+        }
+    }
+}
+
+// Gap utility for older browsers
+.gap-2 {
+    gap: 0.5rem !important;
+}
+
+.gap-3 {
+    gap: 1rem !important;
+}
+
+// Sticky table header
+.table thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+// Mobile-friendly alerts
+.alert {
+    @media (max-width: 767px) {
+        font-size: 0.875rem;
+        padding: 0.75rem;
+    }
+}
