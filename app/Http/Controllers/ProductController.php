@@ -132,4 +132,47 @@ class ProductController extends Controller
         return redirect()->route('products.index')
                         ->with('success','Product deleted successfully');
     }
+
+    /**
+     * Export the products list in CSV format.
+     */
+    public function export(Request $request)
+    {
+        $fileName = 'products.csv';
+        
+        $query = Product::query();
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('c_code', 'like', "%{$search}%")
+                  ->orWhere('particulars', 'like', "%{$search}%")
+                  ->orWhere('hsn', 'like', "%{$search}%");
+        }
+
+        $products = $query->get();
+
+        $columns = ['Id', 'CCode', 'Particulars', 'HSN', 'GST', 'IGST', 'CGST', 'SGST', 'ExcepParticulars', 'IsService', 'Active'];
+
+        return response()->streamDownload(function () use ($products, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            
+            foreach ($products as $product) {
+                fputcsv($file, [
+                    $product->id,
+                    $product->c_code,
+                    $product->particulars,
+                    $product->hsn,
+                    $product->gst,
+                    $product->igst,
+                    $product->cgst,
+                    $product->sgst,
+                    $product->except_particulars ? 1 : 0,
+                    $product->is_service ? 1 : 0,
+                    $product->active ? 1 : 0,
+                ]);
+            }
+            fclose($file);
+        }, $fileName);
+    }
 }

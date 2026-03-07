@@ -9,11 +9,16 @@
             <button type="submit" class="btn btn-secondary">Search</button>
         </form>
 
-        @if(Auth::user()->role === 'super_admin')
-        <a href="{{ route('products.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-1"></i> Create New Product
-        </a>
-        @endif
+        <div class="d-flex gap-2">
+            <a href="{{ route('products.export', ['search' => request('search')]) }}" class="btn btn-success">
+                <i class="bi bi-file-earmark-excel me-1"></i> Export to Excel
+            </a>
+            @if(Auth::user()->role === 'super_admin')
+            <a href="{{ route('products.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Create New Product
+            </a>
+            @endif
+        </div>
     </div>
 
     <div class="card shadow-sm">
