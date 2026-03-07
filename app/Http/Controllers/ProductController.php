@@ -11,12 +11,21 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::latest()->paginate(5);
+        $query = Product::query();
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('c_code', 'like', "%{$search}%")
+                  ->orWhere('particulars', 'like', "%{$search}%")
+                  ->orWhere('hsn', 'like', "%{$search}%");
+        }
+
+        $products = $query->latest()->paginate(50);
         
         return view('products.index', compact('products'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
+            ->with('i', (request()->input('page', 1) - 1) * 50);
     }
 
     /**
@@ -40,11 +49,21 @@ class ProductController extends Controller
         }
 
         $request->validate([
-            'name' => 'required',
-            'detail' => 'required',
+            'c_code' => 'nullable|string',
+            'particulars' => 'required|string',
+            'hsn' => 'nullable|string',
+            'gst' => 'nullable|numeric',
+            'igst' => 'nullable|numeric',
+            'cgst' => 'nullable|numeric',
+            'sgst' => 'nullable|numeric',
         ]);
-      
-        Product::create($request->all());
+        
+        $data = $request->all();
+        $data['except_particulars'] = $request->has('except_particulars') ? 1 : 0;
+        $data['is_service'] = $request->has('is_service') ? 1 : 0;
+        $data['active'] = $request->has('active') ? 1 : 0;
+
+        Product::create($data);
        
         return redirect()->route('products.index')
                         ->with('success','Product created successfully.');
@@ -79,11 +98,21 @@ class ProductController extends Controller
         }
 
         $request->validate([
-            'name' => 'required',
-            'detail' => 'required',
+            'c_code' => 'nullable|string',
+            'particulars' => 'required|string',
+            'hsn' => 'nullable|string',
+            'gst' => 'nullable|numeric',
+            'igst' => 'nullable|numeric',
+            'cgst' => 'nullable|numeric',
+            'sgst' => 'nullable|numeric',
         ]);
       
-        $product->update($request->all());
+        $data = $request->all();
+        $data['except_particulars'] = $request->has('except_particulars') ? 1 : 0;
+        $data['is_service'] = $request->has('is_service') ? 1 : 0;
+        $data['active'] = $request->has('active') ? 1 : 0;
+
+        $product->update($data);
       
         return redirect()->route('products.index')
                         ->with('success','Product updated successfully');

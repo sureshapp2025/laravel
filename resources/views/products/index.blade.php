@@ -3,6 +3,12 @@
 @section('content')
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
         <h2 class="h3 font-weight-bold text-dark mb-0">Product Management</h2>
+        
+        <form action="{{ route('products.index') }}" method="GET" class="d-flex align-items-center">
+            <input type="text" name="search" class="form-control me-2" placeholder="Search..." value="{{ request('search') }}">
+            <button type="submit" class="btn btn-secondary">Search</button>
+        </form>
+
         @if(Auth::user()->role === 'super_admin')
         <a href="{{ route('products.create') }}" class="btn btn-primary">
             <i class="bi bi-plus-circle me-1"></i> Create New Product
@@ -16,39 +22,49 @@
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th class="py-3 px-3">No</th>
-                            <th class="py-3 px-3">Name</th>
-                            <th class="py-3 px-3 d-none d-md-table-cell">Details</th>
                             <th class="py-3 px-3">Action</th>
+                            <th class="py-3 px-3">Id</th>
+                            <th class="py-3 px-3">CCode</th>
+                            <th class="py-3 px-3">Particulars</th>
+                            <th class="py-3 px-3">HSN</th>
+                            <th class="py-3 px-3">GST</th>
+                            <th class="py-3 px-3">IGST</th>
+                            <th class="py-3 px-3">CGST</th>
+                            <th class="py-3 px-3">SGST</th>
+                            <th class="py-3 px-3">ExcepParticulars</th>
+                            <th class="py-3 px-3">IsService</th>
+                            <th class="py-3 px-3">Active</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($products as $product)
                         <tr>
-                            <td class="py-3 px-3">{{ ++$i }}</td>
-                            <td class="py-3 px-3">{{ $product->name }}</td>
-                            <td class="py-3 px-3 d-none d-md-table-cell">{{ Str::limit($product->detail, 50) }}</td>
-                            <td class="py-3 px-3">
-                                <div class="d-flex flex-column flex-md-row gap-1">
-                                    <a href="{{ route('products.show',$product->id) }}" class="btn btn-sm btn-info text-white">
-                                        <i class="bi bi-eye"></i><span class="d-none d-lg-inline ms-1">Show</span>
-                                    </a>
-                                    
-                                    @if(Auth::user()->role === 'super_admin')
-                                    <a href="{{ route('products.edit',$product->id) }}" class="btn btn-sm btn-warning text-white">
-                                        <i class="bi bi-pencil"></i><span class="d-none d-lg-inline ms-1">Edit</span>
-                                    </a>
-                                    
-                                    <form action="{{ route('products.destroy',$product->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">
-                                            <i class="bi bi-trash"></i><span class="d-none d-lg-inline ms-1">Delete</span>
-                                        </button>
-                                    </form>
-                                    @endif
-                                </div>
+                            <td class="py-3 px-3 text-nowrap">
+                                @if(Auth::user()->role === 'super_admin')
+                                <a href="{{ route('products.edit',$product->id) }}" class="btn btn-sm btn-warning text-white" title="Edit">
+                                    <i class="bi bi-pencil"></i><span class="d-none d-lg-inline ms-1">Edit</span>
+                                </a>
+                                
+                                <form action="{{ route('products.destroy',$product->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')" title="Delete">
+                                        <i class="bi bi-trash"></i><span class="d-none d-lg-inline ms-1">Delete</span>
+                                    </button>
+                                </form>
+                                @endif
                             </td>
+                            <td class="py-3 px-3">{{ $product->id }}</td>
+                            <td class="py-3 px-3">{{ $product->c_code }}</td>
+                            <td class="py-3 px-3">{{ $product->particulars }}</td>
+                            <td class="py-3 px-3">{{ $product->hsn }}</td>
+                            <td class="py-3 px-3">{{ $product->gst }}</td>
+                            <td class="py-3 px-3">{{ $product->igst }}</td>
+                            <td class="py-3 px-3">{{ $product->cgst }}</td>
+                            <td class="py-3 px-3">{{ $product->sgst }}</td>
+                            <td class="py-3 px-3">{{ $product->except_particulars }}</td>
+                            <td class="py-3 px-3">{{ $product->is_service }}</td>
+                            <td class="py-3 px-3">{{ $product->active }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -58,6 +74,6 @@
     </div>
     
     <div class="mt-3 mt-md-4">
-        {!! $products->links() !!}
+        {!! $products->appends(['search' => request('search')])->links() !!}
     </div>
 @endsection
