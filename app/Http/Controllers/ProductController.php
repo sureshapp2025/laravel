@@ -11,12 +11,21 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::latest()->paginate(5);
+        $query = Product::query();
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('c_code', 'like', "%{$search}%")
+                  ->orWhere('particulars', 'like', "%{$search}%")
+                  ->orWhere('hsn', 'like', "%{$search}%");
+        }
+
+        $products = $query->latest()->paginate(50);
         
         return view('products.index', compact('products'))
-            ->with('i', (request()->input('page', 1) - 1) * 5);
+            ->with('i', (request()->input('page', 1) - 1) * 50);
     }
 
     /**
@@ -40,11 +49,21 @@ class ProductController extends Controller
         }
 
         $request->validate([
-            'name' => 'required',
-            'detail' => 'required',
+            'c_code' => 'nullable|string',
+            'particulars' => 'required|string',
+            'hsn' => 'nullable|string',
+            'gst' => 'nullable|numeric',
+            'igst' => 'nullable|numeric',
+            'cgst' => 'nullable|numeric',
+            'sgst' => 'nullable|numeric',
         ]);
-      
-        Product::create($request->all());
+        
+        $data = $request->all();
+        $data['except_particulars'] = $request->has('except_particulars') ? 1 : 0;
+        $data['is_service'] = $request->has('is_service') ? 1 : 0;
+        $data['active'] = $request->has('active') ? 1 : 0;
+
+        Product::create($data);
        
         return redirect()->route('products.index')
                         ->with('success','Product created successfully.');
@@ -79,11 +98,21 @@ class ProductController extends Controller
         }
 
         $request->validate([
-            'name' => 'required',
-            'detail' => 'required',
+            'c_code' => 'nullable|string',
+            'particulars' => 'required|string',
+            'hsn' => 'nullable|string',
+            'gst' => 'nullable|numeric',
+            'igst' => 'nullable|numeric',
+            'cgst' => 'nullable|numeric',
+            'sgst' => 'nullable|numeric',
         ]);
       
-        $product->update($request->all());
+        $data = $request->all();
+        $data['except_particulars'] = $request->has('except_particulars') ? 1 : 0;
+        $data['is_service'] = $request->has('is_service') ? 1 : 0;
+        $data['active'] = $request->has('active') ? 1 : 0;
+
+        $product->update($data);
       
         return redirect()->route('products.index')
                         ->with('success','Product updated successfully');
@@ -102,5 +131,48 @@ class ProductController extends Controller
        
         return redirect()->route('products.index')
                         ->with('success','Product deleted successfully');
+    }
+
+    /**
+     * Export the products list in CSV format.
+     */
+    public function export(Request $request)
+    {
+        $fileName = 'products.csv';
+        
+        $query = Product::query();
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('c_code', 'like', "%{$search}%")
+                  ->orWhere('particulars', 'like', "%{$search}%")
+                  ->orWhere('hsn', 'like', "%{$search}%");
+        }
+
+        $products = $query->get();
+
+        $columns = ['Id', 'CCode', 'Particulars', 'HSN', 'GST', 'IGST', 'CGST', 'SGST', 'ExcepParticulars', 'IsService', 'Active'];
+
+        return response()->streamDownload(function () use ($products, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            
+            foreach ($products as $product) {
+                fputcsv($file, [
+                    $product->id,
+                    $product->c_code,
+                    $product->particulars,
+                    $product->hsn,
+                    $product->gst,
+                    $product->igst,
+                    $product->cgst,
+                    $product->sgst,
+                    $product->except_particulars ? 1 : 0,
+                    $product->is_service ? 1 : 0,
+                    $product->active ? 1 : 0,
+                ]);
+            }
+            fclose($file);
+        }, $fileName);
     }
 }
