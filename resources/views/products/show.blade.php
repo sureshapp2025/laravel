@@ -1,13 +1,14 @@
 @extends('products.layout')
-  
+
 @section('content')
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
-        <h2 class="h3 font-weight-bold text-dark mb-0">Show Product</h2>
+    <div
+        class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
+        <h2 class="h3 font-weight-bold text-dark mb-0">Particulars</h2>
         <a href="{{ route('products.index') }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left me-1"></i> Back
         </a>
     </div>
-   
+
     <div class="row justify-content-center">
         <div class="col-12 col-md-10 col-lg-8">
             <div class="card shadow-sm">
@@ -24,7 +25,7 @@
                         <strong class="font-weight-bold text-dark">HSN:</strong>
                         <span class="text-dark">{{ $product->hsn }}</span>
                     </div>
-                    
+
                     <div class="row mb-3 border-bottom pb-2">
                         <div class="col-6 col-md-3"><strong>GST:</strong> {{ $product->gst }}</div>
                         <div class="col-6 col-md-3"><strong>IGST:</strong> {{ $product->igst }}</div>
@@ -34,21 +35,21 @@
 
                     <div class="row mb-0">
                         <div class="col-12 col-md-4">
-                            <strong>Except Particular:</strong> 
+                            <strong>Except Particular:</strong>
                             <span class="badge {{ $product->except_particulars ? 'bg-success' : 'bg-secondary' }}">
-                                {{ $product->except_particulars ? 'Yes' : 'No' }}
+                                {{ $product->except_particulars ? 'Y' : 'N' }}
                             </span>
                         </div>
                         <div class="col-12 col-md-4">
-                            <strong>IS Service:</strong> 
+                            <strong>IS Service:</strong>
                             <span class="badge {{ $product->is_service ? 'bg-success' : 'bg-secondary' }}">
-                                {{ $product->is_service ? 'Yes' : 'No' }}
+                                {{ $product->is_service ? 'Y' : 'N' }}
                             </span>
                         </div>
                         <div class="col-12 col-md-4">
-                            <strong>Active:</strong> 
+                            <strong>Active:</strong>
                             <span class="badge {{ $product->active ? 'bg-success' : 'bg-secondary' }}">
-                                {{ $product->active ? 'Yes' : 'No' }}
+                                {{ $product->active ? 'Y' : 'N' }}
                             </span>
                         </div>
                     </div>
