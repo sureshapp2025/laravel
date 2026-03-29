@@ -30,6 +30,11 @@
 						class="nav-link {{ request()->routeIs('addresses.index') ? 'active fw-bold' : '' }}" href="{{ route('addresses.index') }}">{{ __('Addresses') }}
 					</a>
 				</li>
+				<li class="nav-item">
+					<a
+						class="nav-link {{ request()->routeIs('bookings.*') ? 'active fw-bold' : '' }}" href="{{ route('bookings.index') }}">{{ __('Booking') }}
+					</a>
+				</li>
 			</ul>
 
 			<!-- Right Side Of Navbar -->
@@ -47,11 +52,12 @@
 							</a>
 						</li>
 						<li><hr class="dropdown-divider"></li>
-						<li>LogOut
+						<li>
 							<form method="POST" action="{{ route('logout') }}">
 								@csrf
-								<a
-									class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();">{{ __('Log Out') }}
+								<a class="dropdown-item" href="{{ route('logout') }}"
+									onclick="event.preventDefault(); this.closest('form').submit();">
+									{{ __('Log Out') }}
 								</a>
 							</form>
 						</li>

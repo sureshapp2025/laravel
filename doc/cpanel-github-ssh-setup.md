@@ -203,3 +203,6 @@ php artisan make:model Product -mcr
 php artisan queue:work
 php artisan queue:listen
 php artisan queue:restart
+
+php artisan optimize
+php artisan optimize:clear
