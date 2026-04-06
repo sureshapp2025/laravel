@@ -78,7 +78,7 @@
                             <div class="col-md-4">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="except_particulars" value="1" id="except_particulars" {{ old('except_particulars', $product->except_particulars) ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="except_particulars">Except Particular</label>
+                                    <label class="form-check-label" for="except_particulars">Exceptional Particulars</label>
                                 </div>
                             </div>
                             <div class="col-md-4">

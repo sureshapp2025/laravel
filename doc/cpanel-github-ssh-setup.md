@@ -140,3 +140,69 @@ Set document root to:
 ------------------------------------------------------------------------
 
 🎉 **Done! Your Laravel app is live and GitHub-connected.**
+
+copy the public folder inside build folder and add in the root directroy of
+public_html
+
+
+------------------------------------------------------------------------
+
+🎉 **Images folder **
+
+In Local to move to server 
+ public/images folder[only images] move to  public_html/images  and provide the permission
+
+chmod -R 755 public/images
+chmod 644 public/images/logo.png
+chmod 644 public/images/favicon.ico
+
+
+------------------------------------------------------------------------
+
+🎉 **Images folder **
+
+In Local to move to server 
+ public/images folder[only images] move to  public_html/images  and provide the permission
+
+chmod -R 755 public/images
+chmod 644 public/images/logo.png
+chmod 644 public/images/favicon.ico
+
+
+# Laravel Artisan Commands Cheat Sheet
+
+## 🚀 Basic Commands
+
+### Run Development Server
+```bash
+php artisan serve
+
+
+php artisan route:list
+
+
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+php artisan migrate
+
+php artisan migrate:rollback
+
+
+php artisan migrate:refresh
+
+php artisan migrate:fresh
+
+php artisan db:seed
+php artisan make:controller UserController
+php artisan make:model User
+
+php artisan make:model Product -mcr
+php artisan queue:work
+php artisan queue:listen
+php artisan queue:restart
+
+php artisan optimize
+php artisan optimize:clear
