@@ -35,6 +35,11 @@
 						class="nav-link {{ request()->routeIs('bookings.*') ? 'active fw-bold' : '' }}" href="{{ route('bookings.index') }}">{{ __('Booking') }}
 					</a>
 				</li>
+				<li class="nav-item">
+					<a
+						class="nav-link {{ request()->routeIs('expenses.*') ? 'active fw-bold' : '' }}" href="{{ route('expenses.index') }}">{{ __('Expenses') }}
+					</a>
+				</li>
 			</ul>
 
 			<!-- Right Side Of Navbar -->
@@ -55,9 +60,8 @@
 						<li>
 							<form method="POST" action="{{ route('logout') }}">
 								@csrf
-								<a class="dropdown-item" href="{{ route('logout') }}"
-									onclick="event.preventDefault(); this.closest('form').submit();">
-									{{ __('Log Out') }}
+								<a
+									class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();">{{ __('Log Out') }}
 								</a>
 							</form>
 						</li>
