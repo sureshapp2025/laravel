@@ -131,6 +131,7 @@ class BookingController extends Controller
      */
     public function show(Booking $booking)
     {
+        $booking->load('expenses');
         return view('bookings.show', compact('booking'));
     }
 

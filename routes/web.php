@@ -11,7 +11,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [AuthenticatedSessionController::class, 'create'])->middleware('guest')->name('home');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $recentBookings = \App\Models\Booking::latest()->take(5)->get();
+    $recentExpenses = \App\Models\Expense::latest('id')->take(5)->get();
+    $totalExpenses = \App\Models\Expense::sum('Total');
+    $bookingCount = \App\Models\Booking::count();
+    
+    return view('dashboard', compact('recentBookings', 'recentExpenses', 'totalExpenses', 'bookingCount'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

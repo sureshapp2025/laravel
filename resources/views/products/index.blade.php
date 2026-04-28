@@ -46,6 +46,17 @@
                     <tbody>
                         @foreach ($products as $product)
                             <tr>
+                                <td class="py-3 px-3">{{ $product->id }}</td>
+                                <td class="py-3 px-3">{{ $product->c_code }}</td>
+                                <td class="py-3 px-3">{{ $product->particulars }}</td>
+                                <td class="py-3 px-3">{{ $product->hsn }}</td>
+                                <td class="py-3 px-3">{{ $product->gst }}</td>
+                                <td class="py-3 px-3">{{ $product->igst }}</td>
+                                <td class="py-3 px-3">{{ $product->cgst }}</td>
+                                <td class="py-3 px-3">{{ $product->sgst }}</td>
+                                <td class="py-3 px-3">{{ $product->except_particulars }}</td>
+                                <td class="py-3 px-3">{{ $product->is_service }}</td>
+                                <td class="py-3 px-3">{{ $product->active }}</td>
                                 <td class="py-3 px-3 text-nowrap">
                                     @if(Auth::user()->role === 'super_admin')
                                         <a href="{{ route('products.edit', $product->id) }}"
@@ -63,17 +74,6 @@
                                         </form>
                                     @endif
                                 </td>
-                                <td class="py-3 px-3">{{ $product->id }}</td>
-                                <td class="py-3 px-3">{{ $product->c_code }}</td>
-                                <td class="py-3 px-3">{{ $product->particulars }}</td>
-                                <td class="py-3 px-3">{{ $product->hsn }}</td>
-                                <td class="py-3 px-3">{{ $product->gst }}</td>
-                                <td class="py-3 px-3">{{ $product->igst }}</td>
-                                <td class="py-3 px-3">{{ $product->cgst }}</td>
-                                <td class="py-3 px-3">{{ $product->sgst }}</td>
-                                <td class="py-3 px-3">{{ $product->except_particulars }}</td>
-                                <td class="py-3 px-3">{{ $product->is_service }}</td>
-                                <td class="py-3 px-3">{{ $product->active }}</td>
                             </tr>
                         @endforeach
                     </tbody>
