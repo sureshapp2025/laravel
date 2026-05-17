@@ -3,7 +3,7 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\BookingController;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ParticularController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ExpenseController;
 use Illuminate\Support\Facades\Route;
@@ -21,10 +21,11 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::resource('addresses', AddressController::class);
-    Route::get('products/export', [ProductController::class, 'export'])->name('products.export');
-    Route::resource('products', ProductController::class);
+    Route::get('particulars/export', [ParticularController::class, 'export'])->name('particulars.export');
+    Route::resource('particulars', ParticularController::class);
     Route::resource('bookings', BookingController::class);
     Route::resource('expenses', ExpenseController::class);
+    Route::resource('invoice_particulars', \App\Http\Controllers\InvoiceParticularController::class);
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
