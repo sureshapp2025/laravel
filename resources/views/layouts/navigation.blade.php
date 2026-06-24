@@ -45,6 +45,11 @@
 						class="nav-link {{ request()->routeIs('invoice_particulars.*') ? 'active fw-bold' : '' }}" href="{{ route('invoice_particulars.index') }}">{{ __('Invoice Particulars') }}
 					</a>
 				</li>
+				<li class="nav-item">
+					<a
+						class="nav-link {{ request()->routeIs('invoices.*') ? 'active fw-bold' : '' }}" href="{{ route('invoices.index') }}">{{ __('Tax Invoices') }}
+					</a>
+				</li>
 			</ul>
 
 			<!-- Right Side Of Navbar -->
