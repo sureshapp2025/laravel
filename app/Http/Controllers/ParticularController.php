@@ -2,29 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Models\Particular;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class ProductController extends Controller
+class ParticularController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $query = Product::query();
+        $query = Particular::query();
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->where('c_code', 'like', "%{$search}%")
-                  ->orWhere('particulars', 'like', "%{$search}%")
+            $query->where('particulars', 'like', "%{$search}%")
                   ->orWhere('hsn', 'like', "%{$search}%");
         }
 
-        $products = $query->latest()->paginate(50);
+        $particulars = $query->latest()->paginate(50);
         
-        return view('products.index', compact('products'))
+        return view('particulars.index', compact('particulars'))
             ->with('i', (request()->input('page', 1) - 1) * 50);
     }
 
@@ -36,7 +35,7 @@ class ProductController extends Controller
         if (Auth::user()->role !== 'super_admin') {
             abort(403, 'Unauthorized action.');
         }
-        return view('products.create');
+        return view('particulars.create');
     }
 
     /**
@@ -49,7 +48,6 @@ class ProductController extends Controller
         }
 
         $request->validate([
-            'c_code' => 'nullable|string',
             'particulars' => 'required|string',
             'hsn' => 'nullable|string',
             'gst' => 'nullable|numeric',
@@ -63,42 +61,41 @@ class ProductController extends Controller
         $data['is_service'] = $request->has('is_service') ? 1 : 0;
         $data['active'] = $request->has('active') ? 1 : 0;
 
-        Product::create($data);
+        Particular::create($data);
        
-        return redirect()->route('products.index')
-                        ->with('success','Product created successfully.');
+        return redirect()->route('particulars.index')
+                        ->with('success','Particular created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(Particular $particular)
     {
-        return view('products.show', compact('product'));
+        return view('particulars.show', compact('particular'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit(Particular $particular)
     {
         if (Auth::user()->role !== 'super_admin') {
             abort(403, 'Unauthorized action.');
         }
-        return view('products.edit', compact('product'));
+        return view('particulars.edit', compact('particular'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Particular $particular)
     {
         if (Auth::user()->role !== 'super_admin') {
             abort(403, 'Unauthorized action.');
         }
 
         $request->validate([
-            'c_code' => 'nullable|string',
             'particulars' => 'required|string',
             'hsn' => 'nullable|string',
             'gst' => 'nullable|numeric',
@@ -112,64 +109,62 @@ class ProductController extends Controller
         $data['is_service'] = $request->has('is_service') ? 1 : 0;
         $data['active'] = $request->has('active') ? 1 : 0;
 
-        $product->update($data);
+        $particular->update($data);
       
-        return redirect()->route('products.index')
-                        ->with('success','Product updated successfully');
+        return redirect()->route('particulars.index')
+                        ->with('success','Particular updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(Particular $particular)
     {
         if (Auth::user()->role !== 'super_admin') {
             abort(403, 'Unauthorized action.');
         }
 
-        $product->delete();
+        $particular->delete();
        
-        return redirect()->route('products.index')
-                        ->with('success','Product deleted successfully');
+        return redirect()->route('particulars.index')
+                        ->with('success','Particular deleted successfully');
     }
 
     /**
-     * Export the products list in CSV format.
+     * Export the particulars list in CSV format.
      */
     public function export(Request $request)
     {
-        $fileName = 'products.csv';
+        $fileName = 'particulars.csv';
         
-        $query = Product::query();
+        $query = Particular::query();
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->where('c_code', 'like', "%{$search}%")
-                  ->orWhere('particulars', 'like', "%{$search}%")
+            $query->where('particulars', 'like', "%{$search}%")
                   ->orWhere('hsn', 'like', "%{$search}%");
         }
 
-        $products = $query->get();
+        $particulars = $query->get();
 
-        $columns = ['Id', 'CCode', 'Particulars', 'HSN', 'GST', 'IGST', 'CGST', 'SGST', 'ExcepParticulars', 'IsService', 'Active'];
+        $columns = ['Id', 'Particulars', 'HSN', 'GST', 'IGST', 'CGST', 'SGST', 'ExcepParticulars', 'IsService', 'Active'];
 
-        return response()->streamDownload(function () use ($products, $columns) {
+        return response()->streamDownload(function () use ($particulars, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
             
-            foreach ($products as $product) {
+            foreach ($particulars as $particular) {
                 fputcsv($file, [
-                    $product->id,
-                    $product->c_code,
-                    $product->particulars,
-                    $product->hsn,
-                    $product->gst,
-                    $product->igst,
-                    $product->cgst,
-                    $product->sgst,
-                    $product->except_particulars ? 1 : 0,
-                    $product->is_service ? 1 : 0,
-                    $product->active ? 1 : 0,
+                    $particular->id,
+                    $particular->particulars,
+                    $particular->hsn,
+                    $particular->gst,
+                    $particular->igst,
+                    $particular->cgst,
+                    $particular->sgst,
+                    $particular->except_particulars ? 1 : 0,
+                    $particular->is_service ? 1 : 0,
+                    $particular->active ? 1 : 0,
                 ]);
             }
             fclose($file);

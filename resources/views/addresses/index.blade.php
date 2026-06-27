@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="px-3 py-3">
-        
+
         <div
             class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 mb-md-4 gap-2">
             <h2 class="h3 font-weight-bold text-dark mb-0">Address Management</h2>
@@ -82,12 +82,12 @@
                                     <td class="py-3 px-3">{{ $address->GSTNo }}</td>
                                     <td class="py-3 px-3">
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <a href="{{ route('addresses.show', $address->Id) }}" class="btn btn-outline-info"
+                                            <a href="{{ route('addresses.show', $address->Id) }}" class="btn btn-info"
                                                 title="View">
                                                 <i class="bi bi-eye">View</i>
                                             </a>
                                             <a href="{{ route('addresses.edit', $address->Id) }}"
-                                                class="btn btn-outline-primary" title="Edit">
+                                                class="btn btn-sm btn-warning text-white" title="Edit">
                                                 <i class="bi bi-pencil">Edit</i>
                                             </a>
                                             <form action="{{ route('addresses.destroy', $address->Id) }}" method="POST"
@@ -95,7 +95,7 @@
                                                 style="display: inline-block;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-outline-danger" title="Delete">
+                                                <button type="submit" class="btn btn-sm btn-danger" title="Delete">
                                                     <i class="bi bi-trash">Delete</i>
                                                 </button>
                                             </form>
