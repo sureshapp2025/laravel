@@ -27,6 +27,8 @@ class Invoice extends Model
         'billdate',
         'credit_note_no',
         'credit_note_date',
+        'shipper_invoice',
+        'shipper_consignee',
         'acode',
         'company_name',
         'aline1',

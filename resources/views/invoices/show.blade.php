@@ -194,28 +194,38 @@ if (!function_exists('numberToWords')) {
                     <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-outline-primary d-inline-flex align-items-center gap-2 fw-semibold">
                         <i class="fas fa-edit"></i> Edit
                     </a>
-                    <button onclick="window.print()" class="btn btn-primary d-inline-flex align-items-center gap-2 fw-bold shadow-sm">
-                        <i class="fas fa-print"></i> Print / Save PDF
-                    </button>
+                    <a href="{{ route('invoices.pdf', $invoice->id) }}" class="btn btn-success d-inline-flex align-items-center gap-2 fw-bold shadow-sm">
+                        <i class="fas fa-file-pdf"></i> Download PDF
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
+    @php
+        $companyDetail = \App\Models\CompanyDetail::getActive();
+    @endphp
     <!-- Print Invoice Container -->
     <div class="invoice-container">
         <!-- COMPANY HEADER -->
-        <div class="row align-items-start border-dashed-bottom pb-4 mb-4">
-            <div class="col-7">
-                <div class="company-title">TRACKSEN LOGISTICS</div>
+        <div class="row align-items-center border-dashed-bottom pb-4 mb-4">
+            <div class="col-3">
+                @if($companyDetail && $companyDetail->logo_path)
+                    <img src="{{ asset($companyDetail->logo_path) }}" alt="{{ $companyDetail->company_name }} Logo" class="img-fluid" style="max-height: 80px; object-fit: contain;">
+                @else
+                    <img src="{{ asset('images/ao_logo.jpg') }}" alt="AO Logistics Logo" class="img-fluid" style="max-height: 80px;">
+                @endif
+            </div>
+            <div class="col-9 text-end">
+                <div class="company-title text-uppercase" style="font-size: 28px; font-weight: 800; color: #f59e0b;">{{ $companyDetail ? $companyDetail->company_name : 'AO LOGISTICS' }}</div>
                 <div class="fs-7 text-muted mt-1">
-                    No. 12, Third Floor, Rajaji Salai, Chennay - 600001<br>
-                    <strong>GSTIN:</strong> 33AAACT9876A1Z0 | <strong>PAN:</strong> AAACT9876A<br>
-                    <strong>Email:</strong> billing@tracksen.com | <strong>Phone:</strong> +91 44 2345 6789<br>
-                    <strong>State:</strong> TAMIL NADU (State Code: 33)
+                    {!! $companyDetail ? nl2br(e($companyDetail->address)) : 'No. 7, 14th A Main Road, Behind More Mega Mart,<br>Sahakara Nagar, Bengaluru - 560 092. India' !!}<br>
+                    <strong>GSTIN:</strong> {{ $companyDetail ? $companyDetail->gst_number : '29AHWPT9984H1ZV' }} | <strong>PAN:</strong> {{ $companyDetail ? $companyDetail->pan : 'AHWPT9984H' }} | <strong>TAN:</strong> {{ $companyDetail ? $companyDetail->tan : 'BLRB24521A' }}<br>
+                    <strong>Email:</strong> {{ $companyDetail ? $companyDetail->email : 'nandan@aologistics.in' }} | <strong>Phone:</strong> {{ $companyDetail ? $companyDetail->telephone : '+91 70222 84895' }}<br>
+                    <strong>State Code:</strong> {{ $companyDetail ? $companyDetail->state_code : '29' }}
                 </div>
             </div>
-            <div class="col-5 text-end">
+        </div>
                 <div class="invoice-title-badge text-uppercase text-dark-blue mb-2">
                     @if($invoice->invoice_type == 'Proforma')
                         Proforma Invoice
@@ -236,8 +246,6 @@ if (!function_exists('numberToWords')) {
                         <span class="text-danger fw-bold">UNPAID</span>
                     @endif
                 </div>
-            </div>
-        </div>
 
         <!-- CLIENT & SHIPPING ADDRESS PANELS -->
         <div class="row g-3 mb-4">
@@ -268,6 +276,9 @@ if (!function_exists('numberToWords')) {
                         <strong>Proforma No:</strong> {{ $invoice->proforma_invoice_no }}<br>
                         <strong>Proforma Date:</strong> {{ $invoice->proforma_invoice_date ? \Carbon\Carbon::parse($invoice->proforma_invoice_date)->format('d-M-Y') : '-' }}<br>
                     @endif
+                    @if($invoice->shipper_consignee)
+                        <strong>Shipper / Consignee:</strong> {!! nl2br(e($invoice->shipper_consignee)) !!}<br>
+                    @endif
                     @if($invoice->guarantee_l1)
                         <strong>MBL/AWB:</strong> {{ $invoice->guarantee_l1 }}<br>
                     @endif
@@ -285,7 +296,7 @@ if (!function_exists('numberToWords')) {
         </div>
 
         <!-- TRANSPORT DETAILS GRID -->
-        @if($invoice->category || $invoice->stype || $invoice->hcode || $invoice->remarks || $invoice->taxsch || $invoice->irn || $invoice->version || $invoice->credit_note_no || $invoice->credit_note_date)
+        @if($invoice->category || $invoice->stype || $invoice->hcode || $invoice->remarks || $invoice->taxsch || $invoice->irn || $invoice->version || $invoice->shipper_invoice || $invoice->shipper_consignee)
             <div class="bg-light p-3 rounded-2 border mb-4">
                 <div class="row g-2 fs-8 text-muted">
                     @if($invoice->category)
@@ -309,8 +320,8 @@ if (!function_exists('numberToWords')) {
                     @if($invoice->version)
                         <div class="col-md-3"><strong>CBM:</strong> {{ $invoice->version }}</div>
                     @endif
-                    @if($invoice->credit_note_no)
-                        <div class="col-md-3"><strong>Shipper Invoice:</strong> {{ $invoice->credit_note_no }}</div>
+                    @if($invoice->shipper_invoice)
+                        <div class="col-md-3"><strong>Shipper Invoice:</strong> {{ $invoice->shipper_invoice }}</div>
                     @endif
                 </div>
             </div>
@@ -383,28 +394,44 @@ if (!function_exists('numberToWords')) {
                 <!-- Bank Details -->
                 <div class="bank-box mb-3">
                     <h6 class="text-uppercase fw-bold text-dark fs-8 border-bottom pb-1 mb-2"><i class="fas fa-university me-1.5 text-primary"></i>Bank Payment Instructions</h6>
-                    <table class="w-100">
-                        <tr>
-                            <td style="width: 90px;" class="text-muted">Bank Name:</td>
-                            <td class="fw-bold text-dark">{{ $invoice->bank ?? 'YES Bank' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Account Name:</td>
-                            <td class="fw-bold text-dark">TRACKSEN LOGISTICS</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Account No:</td>
-                            <td class="fw-bold text-dark">123456789012 (Current A/c)</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">IFSC Code:</td>
-                            <td class="fw-bold text-dark">YESB0000123</td>
-                        </tr>
-                        <tr>
-                            <td class="text-muted">Branch:</td>
-                            <td class="text-dark">Rajaji Salai, Chennai</td>
-                        </tr>
-                    </table>
+                    <div class="row align-items-center">
+                        <div class="col-8">
+                            <table class="w-100">
+                                <tr>
+                                    <td style="width: 100px;" class="text-muted">Bank Name:</td>
+                                    <td class="fw-bold text-dark">Kotak Mahindra Bank</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Account Name:</td>
+                                    <td class="fw-bold text-dark">{{ $companyDetail ? $companyDetail->company_name : 'AO LOGISTICS' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Account No:</td>
+                                    <td class="fw-bold text-dark">6450907494 (Current A/c)</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">IFSC Code:</td>
+                                    <td class="fw-bold text-dark">KKBK0008045</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Swift Code:</td>
+                                    <td class="fw-bold text-dark">KKBKINBBCPC</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Branch:</td>
+                                    <td class="text-dark">Sahakara Nagar, Bengaluru - 560092</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">UPI ID:</td>
+                                    <td class="fw-bold text-dark">9611570671@kotak</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-4 text-center">
+                            <span class="fs-9 text-muted d-block mb-1 fw-bold">Scan to Pay</span>
+                            <img src="{{ asset('images/upi_qr.png') }}" alt="UPI QR Code" class="img-fluid" style="max-height: 80px; border: 1px solid #dee2e6; padding: 2px; border-radius: 4px;">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -460,28 +487,25 @@ if (!function_exists('numberToWords')) {
                 </table>
             </div>
         </div>
-
         <!-- TERMS & SIGNATURE -->
         <div class="row align-items-end pt-3 mt-4 border-top">
             <div class="col-7">
-                <div class="terms-text">
+                <div class="terms-text" style="font-size: 11px; line-height: 1.5; color: #555555;">
                     <strong>Terms & Conditions:</strong><br>
-                    1. Interest @ 18% per annum will be charged if this bill is not paid within the due credit period.<br>
-                    2. Any discrepancy in this bill must be notified within 7 days of receipt.<br>
-                    3. All payments should be made by Cheque/DD/NEFT/RTGS favoring <strong>TRACKSEN LOGISTICS</strong>.<br>
-                    4. Subject to Chennai Jurisdiction.
+                    1. Our Billing system start generating E-Invoices from 1st April 2026.<br>
+                    2. Interest @ 2% per month or part thereof or at the rate stipulated in the contract will be imposed on overdue amounts.<br>
+                    3. Payment to be made by cross cheque / Draft in favour of <strong>"{{ $companyDetail ? $companyDetail->company_name : 'AO LOGISTICS' }}"</strong>.<br>
+                    4. Contents of the Invoice will be considered correct if no error is reported within 7 days.<br>
+                    5. Payment should be settled within 30 days from the date of Invoice.<br>
+                    6. All Objections/Claims are subject to Bengaluru Jurisdiction.<br>
+                    7. MSME Udyam Reg No : UDYAM-KR-02-0008928
                 </div>
             </div>
-            <div class="col-5 text-end">
-                <div class="fs-8 text-muted mb-4">For <strong>TRACKSEN LOGISTICS</strong></div>
-                @if($invoice->hcode == 'E-Signature')
-                    <div class="d-inline-block border border-2 border-primary border-opacity-25 rounded px-3 py-1 bg-primary bg-opacity-5 text-primary fw-bold fs-7 mb-2 text-center" style="transform: rotate(-3deg);">
-                        E-SIGNATURE AUTHORIZED<br>
-                        <span class="fs-9 text-muted fw-normal">System Digitally Verified</span>
-                    </div>
-                @else
-                    <div class="text-dark-blue fw-bold fs-7 mb-2">{{ $invoice->hcode }}</div>
-                @endif
+            <div class="col-5 text-end position-relative">
+                <div class="fs-8 text-muted mb-4">For <strong>{{ $companyDetail ? $companyDetail->company_name : 'AO LOGISTICS' }}</strong></div>
+                <div style="height: 70px; margin-bottom: 10px; position: relative;">
+                    <img src="{{ asset('images/stamp_signature.png') }}" alt="Stamp & Signature" class="img-fluid" style="max-height: 70px; position: absolute; right: 20px; top: -15px; z-index: 5; mix-blend-mode: multiply;">
+                </div>
                 <div class="border-top pt-1 text-muted fs-8 fw-semibold">Authorized Signatory</div>
             </div>
         </div>

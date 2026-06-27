@@ -253,11 +253,11 @@
 
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Shipper Inv.</label>
-                            <input type="text" name="credit_note_no" id="shipper_inv" class="form-control" value="{{ $invoice->credit_note_no }}">
+                            <input type="text" name="shipper_invoice" id="shipper_inv" class="form-control" value="{{ $invoice->shipper_invoice }}">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Shipper/Consignee</label>
-                            <input type="text" name="credit_note_date" id="shipper_consignee" class="form-control" value="{{ $invoice->credit_note_date }}" placeholder="Name details">
+                            <input type="text" name="shipper_consignee" id="shipper_consignee" class="form-control" value="{{ $invoice->shipper_consignee }}" placeholder="Name details">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Sales Rep</label>
@@ -493,7 +493,7 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         // 1. Storage for dynamic particulars line items, initialized with existing database particulars
-        let particularsList = @json($existingParticulars->map(fn($p) => [
+        let particularsList = {!! json_encode($existingParticulars->map(fn($p) => [
             'particulars' => $p->Particulars,
             'hsn' => $p->HSN,
             'gst_rate' => ($p->IGST > 0) ? (float)$p->IGST : (($p->CGST > 0) ? (float)($p->CGST * 2) : 18.00),
@@ -510,7 +510,7 @@
             'igst_value' => (float)$p->IGSTValue,
             'total' => (float)$p->Total,
             'additional' => $p->Additional,
-        ]));
+        ])) !!};
 
         // Master data objects
         const clients = @json($clients->keyBy('Id'));

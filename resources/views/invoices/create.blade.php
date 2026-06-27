@@ -250,11 +250,11 @@
 
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Shipper Inv.</label>
-                            <input type="text" name="credit_note_no" id="shipper_inv" class="form-control">
+                            <input type="text" name="shipper_invoice" id="shipper_inv" class="form-control">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Shipper/Consignee</label>
-                            <input type="text" name="credit_note_date" id="shipper_consignee" class="form-control" placeholder="Name details">
+                            <input type="text" name="shipper_consignee" id="shipper_consignee" class="form-control" placeholder="Name details">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Sales Rep</label>

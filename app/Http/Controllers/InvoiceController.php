@@ -96,6 +96,8 @@ class InvoiceController extends Controller
             'billdate' => 'required|date',
             'credit_note_no' => 'nullable|string|max:100',
             'credit_note_date' => 'nullable|date',
+            'shipper_invoice' => 'nullable|string|max:100',
+            'shipper_consignee' => 'nullable|string',
             'acode' => 'required|string|max:50',
             'company_name' => 'required|string|max:200',
             'aline1' => 'nullable|string|max:255',
@@ -260,6 +262,8 @@ class InvoiceController extends Controller
             'billdate' => 'required|date',
             'credit_note_no' => 'nullable|string|max:100',
             'credit_note_date' => 'nullable|date',
+            'shipper_invoice' => 'nullable|string|max:100',
+            'shipper_consignee' => 'nullable|string',
             'acode' => 'required|string|max:50',
             'company_name' => 'required|string|max:200',
             'aline1' => 'nullable|string|max:255',
@@ -378,4 +382,42 @@ class InvoiceController extends Controller
 
         return redirect()->route('invoices.index')->with('success', "Invoice {$billNo} deleted successfully.");
     }
+
+    /**
+     * Generate and download the PDF for the specified invoice.
+     */
+    public function pdf(Invoice $invoice)
+    {
+        $particulars = InvoiceParticular::where('BillNo', $invoice->billno)->get();
+        
+        // Fetch QR code via cURL to bypass allow_url_fopen limitations on shared hosts
+        $qrCodeBase64 = null;
+        try {
+            $qrData = "Invoice No: " . $invoice->billno . "\nGSTIN: 29AHWPT9984H1ZV\nAmount: " . $invoice->grand_total . "\nIRN: " . ($invoice->irn ?? '');
+            $url = "https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=" . urlencode($qrData);
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            $qrCodeData = curl_exec($ch);
+            curl_close($ch);
+
+            if ($qrCodeData) {
+                $qrCodeBase64 = 'data:image/png;base64,' . base64_encode($qrCodeData);
+            }
+        } catch (\Exception $e) {
+            $qrCodeBase64 = null;
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('invoices.pdf', compact('invoice', 'particulars', 'qrCodeBase64'));
+        $pdf->setPaper('a4', 'portrait');
+        $pdf->setWarnings(false);
+        $pdf->setOption('isRemoteEnabled', true);
+        
+        return $pdf->download("Invoice_{$invoice->billno}.pdf");
+    }
 }
+

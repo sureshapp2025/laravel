@@ -28,6 +28,8 @@ return new class extends Migration
                 $table->date('billdate')->nullable();
                 $table->string('credit_note_no')->nullable();
                 $table->date('credit_note_date')->nullable();
+                $table->string('shipper_invoice')->nullable();
+                $table->text('shipper_consignee')->nullable();
                 $table->string('acode')->nullable()->index();
                 $table->string('company_name')->nullable();
                 $table->string('aline1')->nullable();

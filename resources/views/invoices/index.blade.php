@@ -125,17 +125,17 @@
                                         @endif
                                     </td>
                                     <td class="text-center pe-4">
-                                        <div class="d-flex align-items-center justify-content-center gap-1.5">
-                                            <a href="{{ route('invoices.show', $invoice->id) }}" class="btn btn-outline-primary btn-sm p-1.5 d-inline-flex align-items-center justify-content-center rounded-2" title="View / Print Invoice">
-                                                <i class="fas fa-print"></i>
+                                        <div class="d-flex align-items-center justify-content-center gap-2">
+                                            <a href="{{ route('invoices.show', $invoice->id) }}" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="View Invoice">
+                                                <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-outline-secondary btn-sm p-1.5 d-inline-flex align-items-center justify-content-center rounded-2" title="Edit Invoice">
+                                            <a href="{{ route('invoices.edit', $invoice->id) }}" class="btn btn-sm btn-outline-success d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Edit Invoice">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <form action="{{ route('invoices.destroy', $invoice->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this invoice? This will also delete all associated particulars.')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-outline-danger btn-sm p-1.5 d-inline-flex align-items-center justify-content-center rounded-2" title="Delete Invoice">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Delete Invoice">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
